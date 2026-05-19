@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatos Latam — Generador de Contenido IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- SETUP SCREEN -->
+  <div class="setup-screen" id="setup-screen">
+    <div class="setup-inner">
+      <div class="setup-logo">
+        <div class="logo-box">RL</div>
+        <div class="logo-text">Relatos Latam</div>
+      </div>
+      <h1 class="setup-title">Generador de<br><em>Contenido IA</em></h1>
+      <p class="setup-sub">Ingresá tu API Key de Anthropic para empezar.<br>Se guarda solo en tu navegador, nunca se envía a ningún servidor externo.</p>
+      <div class="api-input-wrap">
+        <input type="password" id="api-key-input" class="api-input" placeholder="sk-ant-api03-...">
+        <button class="api-btn" onclick="saveKey()">Entrar</button>
+      </div>
+      <div class="api-error" id="api-error"></div>
+      <a href="https://console.anthropic.com" target="_blank" class="api-link">¿No tenés API Key? Conseguí la tuya en console.anthropic.com →</a>
+    </div>
+  </div>
+
+  <!-- MAIN APP -->
+  <div class="main-app hidden" id="main-app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sb-top">
+        <div class="sb-logo">
+          <div class="logo-box sm">RL</div>
+          <div>
+            <div class="logo-name">Relatos Latam</div>
+            <div class="logo-ver">v2.0 · motor elite</div>
+          </div>
+        </div>
+
+        <div class="sb-section">Canal</div>
+        <div class="canal-list" id="canal-list">
+          <div class="canal-item active" data-canal="traicion" onclick="setCanal(this)">
+            <span class="canal-dot" style="background:#cc2020"></span>
+            <span>Traición y Venganza</span>
+          </div>
+          <div class="canal-item" data-canal="crimen" onclick="setCanal(this)">
+            <span class="canal-dot" style="background:#6366f1"></span>
+            <span>Misterios y Crimen</span>
+          </div>
+          <div class="canal-item" data-canal="gaming" onclick="setCanal(this)">
+            <span class="canal-dot" style="background:#22c55e"></span>
+            <span>Historias Gaming</span>
+          </div>
+        </div>
+
+        <div class="sb-section">Plataformas (siempre)</div>
+        <div class="platform-badges">
+          <span class="pbadge yt">📺 YT Largo 16:9</span>
+          <span class="pbadge tk">📱 TikTok 9:16</span>
+          <span class="pbadge sh">▶ YT Shorts 9:16</span>
+        </div>
+
+        <div class="sb-section">Configuración</div>
+        <div class="sb-field">
+          <label class="sb-label">Tema o idea (opcional)</label>
+          <input type="text" id="tema" class="sb-input" placeholder="Ej: traición entre socios…">
+        </div>
+        <div class="sb-field">
+          <label class="sb-label">Tono narrativo</label>
+          <select id="tono" class="sb-select">
+            <option value="thriller">Thriller psicológico oscuro</option>
+            <option value="documental">Documental sobrio y frío</option>
+            <option value="suspense">Suspense creciente</option>
+            <option value="emocional">Emocional e íntimo</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="sb-bottom">
+        <button class="gen-btn" id="gen-btn" onclick="generar()">
+          <span class="spinner hidden" id="spinner"></span>
+          <span id="gen-label">Generar contenido</span>
+        </button>
+        <button class="logout-btn" onclick="logout()">Cambiar API Key</button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <header class="main-header">
+        <div>
+          <h2 class="main-title">Generador de contenido</h2>
+          <p class="main-sub">Plot twist real · Números en letras · Bloques ≤450 car para CapCut</p>
+        </div>
+        <div class="header-right">
+          <div class="live-dot"></div>
+          <span class="live-label">Motor activo</span>
+        </div>
+      </header>
+
+      <div class="main-content" id="main-content">
+        <div class="empty-state" id="empty-state">
+          <div class="empty-glyph">RL</div>
+          <p class="empty-title">Listo para generar</p>
+          <p class="empty-sub">Elegí el canal, ajustá el tono y presioná el botón. Se generan todos los formatos de una sola vez.</p>
+        </div>
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

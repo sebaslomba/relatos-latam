@@ -1,0 +1,18 @@
+# API Keys — NUNCA subir al repositorio
+.env
+.env.local
+config.local.js
+secrets.js
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Node (si usás servidor local)
+node_modules/
