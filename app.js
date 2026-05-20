@@ -135,6 +135,27 @@ function fixNumbers(text) {
   return t;
 }
 
+
+// ── NÚMEROS SIMPLES PARA CONTEXTO PRE-GENERADO ───────────────
+function numToWords_simple(n) {
+  if (n === 75000) return 'setenta y cinco mil';
+  if (n === 80000) return 'ochenta mil';
+  if (n === 85000) return 'ochenta y cinco mil';
+  if (n === 90000) return 'noventa mil';
+  if (n === 150000) return 'ciento cincuenta mil';
+  if (n === 160000) return 'ciento sesenta mil';
+  if (n === 170000) return 'ciento setenta mil';
+  if (n === 180000) return 'ciento ochenta mil';
+  if (n === 190000) return 'ciento noventa mil';
+  if (n === 200000) return 'doscientos mil';
+  // Recuperados (60% del robado)
+  if (n === 45000) return 'cuarenta y cinco mil';
+  if (n === 48000) return 'cuarenta y ocho mil';
+  if (n === 51000) return 'cincuenta y un mil';
+  if (n === 54000) return 'cincuenta y cuatro mil';
+  return String(n);
+}
+
 // ── SPLIT EN BLOQUES ─────────────────────────────────────────
 function splitBlocks(text, max = 440) {
   const paragraphs = text.split(/\n+/).map(p => p.trim()).filter(Boolean);
@@ -172,61 +193,78 @@ function buildPrompt() {
              || c.temas[Math.floor(Math.random() * c.temas.length)];
   const tono = TONOS[document.getElementById('tono').value];
 
+  // Generar contexto numérico coherente para que el modelo no invente inconsistencias
+  const year_options = [2016, 2017, 2018];
+  const year_start = year_options[Math.floor(Math.random() * year_options.length)];
+  const year_meet  = year_start - 2;
+  const year_end   = year_start + 4;
+  const monthly_options = [150000, 160000, 170000, 180000, 190000, 200000];
+  const monthly_usd = monthly_options[Math.floor(Math.random() * monthly_options.length)];
+  const stolen_options  = [75000, 80000, 85000, 90000];
+  const stolen_usd  = stolen_options[Math.floor(Math.random() * stolen_options.length)];
+  const returned_options = [45000, 48000, 51000, 54000];
+  const returned_usd = returned_options[Math.floor(Math.random() * returned_options.length)];
+
+  const monthly_words  = numToWords_simple(monthly_usd);
+  const stolen_words   = numToWords_simple(stolen_usd);
+  const returned_words = numToWords_simple(returned_usd);
+
   return {
     tema,
-    prompt: `Sos un guionista de élite especializado en contenido viral oscuro y psicológico para YouTube y TikTok en español latino. Tu trabajo es crear historias IMPOSIBLES de dejar de ver.
+    prompt: `Sos un guionista de élite para YouTube y TikTok en español latino. Creás historias IMPOSIBLES de dejar de ver.
 
-REGLAS ABSOLUTAS:
+REGLAS — TODAS OBLIGATORIAS, NINGUNA NEGOCIABLE:
 
-1. PLOT TWIST REAL EN DOS O TRES CAPAS. Capa uno: algo que parece ser el final. Capa dos: el giro que destruye todo lo anterior. Capa tres (opcional): un último dato ambiguo. El tipo de giro que hace que la gente diga "tuve que escucharlo dos veces".
+COHERENCIA MATEMÁTICA TOTAL: Antes de escribir una sola palabra, definí la línea de tiempo completa y verificá que todos los números, fechas y montos sean 100% consistentes entre sí. Si algo no cierra matemáticamente, reescribilo. Esto es lo más importante.
 
-2. PREMISA ORIGINAL. La situación de partida tiene que ser algo que el espectador no haya procesado antes. Una combinación inesperada. Un ángulo que nadie tomó.
+MONEDA: SIEMPRE en dólares estadounidenses. JAMÁS pesos ni ninguna otra moneda. Si el tema implica una empresa latinoamericana, igual los montos son en dólares. Sin excepción.
 
-3. PISTAS SEMBRADAS. Desde el comienzo hay detalles que parecen irrelevantes pero que el espectador va a querer re-escuchar cuando llegue el giro. Eso genera rewatch y el algoritmo lo premia.
+NÚMEROS EN LETRAS: Jamás usar dígitos. Todo en letras. "ochenta mil dólares" no "80.000". Sin excepción.
 
-4. PERSONAJES CONTRADICTORIOS. El villano tiene una razón que casi tiene sentido. El héroe tiene una falla real. Las personas reales son contradictorias.
+CONTEXTO NUMÉRICO PRE-DEFINIDO — USARLO EXACTAMENTE, SIN MODIFICAR NI CONTRADECIR:
+- Los personajes se conocieron en ${year_meet}
+- La empresa o situación comenzó en ${year_start}
+- Los hechos ocurrieron entre ${year_start} y ${year_end}
+- Volumen/facturación mensual: ${monthly_words} dólares mensuales
+- Monto total defraudado o robado: ${stolen_words} dólares
+- Monto recuperado: ${returned_words} dólares
+- Estos números son fijos e inamovibles. No los cambies. No contradigas estos valores en ninguna parte del guión.
 
-5. FRASES CORTAS SEPARADAS POR PUNTO. No por coma. Una idea por oración. Crítico para que la voz IA suene natural.
+PLOT TWIST EN DOS CAPAS REALES:
+- Capa 1: algo que parece el final. El espectador cree que entendió todo.
+- Capa 2: el giro que destruye lo anterior. Reencuadra toda la historia desde el principio.
+- Las pistas deben estar sembradas desde el inicio, disfrazadas de detalles irrelevantes.
 
-6. SIN SALTOS DE LÍNEA DOBLES dentro de un mismo bloque narrativo.
+FRASES CORTAS. Una idea por oración. Punto. Nueva oración.
 
-7. TODOS LOS NÚMEROS EN LETRAS. Jamás usar dígitos ni puntos de miles. Ochenta y tres mil cuatrocientos dólares. Dos mil quince. Sin excepción.
-
-8. GANCHO EN LOS PRIMEROS CINCO SEGUNDOS. La primera oración es el hecho más perturbador de toda la historia. Sin contexto previo. Directo al centro del misterio.
-
-9. FINAL PERTURBADOR O AMBIGUO. Sin moraleja. Sin cierre limpio.
-
-10. DISCLAIMER OBLIGATORIO. Primera oración del guión largo: "Esta historia es una obra de ficción creada con inteligencia artificial. Los nombres, personajes y eventos son completamente inventados."
+DISCLAIMER OBLIGATORIO al inicio del guión largo: "Esta historia es una obra de ficción creada con inteligencia artificial. Los nombres, personajes y eventos son completamente inventados."
 
 CANAL: "${c.nombre}"
-TEMA BASE: "${tema}"
+TEMA: "${tema}"
 TONO: ${tono}
 
-ESTRATEGIA DE PUBLICACIÓN:
-El guión largo 16:9 va a YouTube (CPM alto). El guión short 9:16 se sube exactamente igual a TikTok Y a YouTube Shorts — un solo archivo, dos plataformas, máximo alcance.
-
-Respondé EXACTAMENTE con estas secciones, sin texto extra:
+Respondé ÚNICAMENTE con estas secciones. Sin texto antes ni después:
 
 [TITULO_YT]
-Máximo sesenta caracteres. Genera paranoia, urgencia o incredulidad. El tipo de título que hace parar el scroll y pensar "qué es esto".
+Máximo sesenta caracteres. Paranoia o incredulidad. Sin clichés.
 
 [DESCRIPCION_YT]
-Doscientas cincuenta palabras. Primer párrafo: revelar apenas lo suficiente para que sea imposible no hacer clic. Segundo: contexto sin spoilers. Tercero: pregunta sobre el plot twist para los comentarios. Cerrar con palabras clave. Incluir al inicio: "Ficción generada con IA."
+Doscientas cincuenta palabras. Párrafo uno: gancho imposible de ignorar. Párrafo dos: contexto sin spoilers. Párrafo tres: pregunta sobre el twist. Palabras clave al final. "Ficción generada con IA." al inicio.
 
 [GUION_LARGO]
-Aproximadamente mil cuatrocientas palabras. Solo texto narrativo puro, sin corchetes ni instrucciones. Estructura: disclaimer, gancho brutal, contexto con pistas sembradas, desarrollo en tres capas de tensión creciente, clímax con primer golpe, giro real que destruye todo, resolución perturbadora o ambigua, llamada a la acción con pregunta sobre el twist.
+Mil cuatrocientas palabras. Solo narrativa pura. Sin corchetes. Disclaimer al inicio, gancho brutal, contexto con pistas sembradas, tres capas de tensión, clímax con primer golpe aparente, giro real que destruye todo, resolución perturbadora, llamada a la acción.
 
 [TITULO_SHORT]
-Máximo cuarenta caracteres. Miedo, incredulidad o curiosidad extrema. Incluir "(Ficción IA)" al final. Mismo título para TikTok y YouTube Shorts.
+Máximo cuarenta caracteres. Impacto máximo. "(Ficción IA)" al final.
 
 [GUION_SHORT]
-Exactamente ciento setenta palabras para sesenta y cinco segundos. Solo texto narrativo puro. Primera oración: el hecho más perturbador sin contexto. Desarrollo en sprint hacia el giro. El twist golpea, silencio con punto y aparte, último dato que reencuadra todo. Cierre: pregunta más "Historia completa en YouTube". Este guión se sube igual a TikTok y YouTube Shorts.
+Ciento setenta palabras. Solo narrativa pura. Primera oración: el hecho más perturbador sin contexto. Sprint hacia el giro. El twist golpea. Punto y aparte. Último dato. Cierre con pregunta y "Historia completa en YouTube".
 
 [DESCRIPCION_SHORT]
-Cincuenta palabras para usar igual en TikTok y YouTube Shorts. Incluir "(Ficción IA)" al inicio y "Historia completa en YouTube" al final.
+Cincuenta palabras. "(Ficción IA)" al inicio. "Historia completa en YouTube" al final.
 
 [HASHTAGS]
-Veinte hashtags en español. Un hashtag por línea. Sin comas. Mezclar masivos, nicho específico y uno que invite al debate.`
+Veinte hashtags en español. Un hashtag por línea. Sin comas.`
   };
 }
 
