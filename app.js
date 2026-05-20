@@ -156,6 +156,18 @@ function numToWords_simple(n) {
   return String(n);
 }
 
+// ── LIMPIAR TEXTO PARA VOZ IA ────────────────────────────────
+function cleanForVoice(text) {
+  // CapCut Wise Man lee las comillas en inglés — eliminamos todas
+  return text
+    .replace(/«|»|"|"|„|‟/g, '')      // comillas tipográficas
+    .replace(/"/g, '')                  // comillas dobles rectas
+    .replace(/'/g, '')                  // comillas simples rectas  
+    .replace(/'/g, '')                  // apóstrofes tipográficos
+    .replace(/\s{2,}/g, ' ')            // espacios dobles
+    .trim();
+}
+
 // ── SPLIT EN BLOQUES ─────────────────────────────────────────
 function splitBlocks(text, max = 440) {
   const paragraphs = text.split(/\n+/).map(p => p.trim()).filter(Boolean);
@@ -236,6 +248,8 @@ PLOT TWIST EN DOS CAPAS REALES:
 - Las pistas deben estar sembradas desde el inicio, disfrazadas de detalles irrelevantes.
 
 FRASES CORTAS. Una idea por oración. Punto. Nueva oración.
+
+CERO COMILLAS: Jamás usar comillas de ningún tipo en el guión. Ni dobles, ni simples, ni tipográficas. Si alguien dice algo, usá dos puntos. Ejemplo: Rodrigo dijo: No voy a devolver nada. NO: Rodrigo dijo "No voy a devolver nada".
 
 DISCLAIMER OBLIGATORIO al inicio del guión largo: "Esta historia es una obra de ficción creada con inteligencia artificial. Los nombres, personajes y eventos son completamente inventados."
 
@@ -319,7 +333,7 @@ async function generar() {
     }
 
     const data = await res.json();
-    const text = fixNumbers(data.content?.map(i => i.text || '').join('\n') || '');
+    const text = cleanForVoice(fixNumbers(data.content?.map(i => i.text || '').join('\n') || ''));
 
     const progEl = document.getElementById('prog-fill');
     if (progEl) progEl.style.width = '100%';
